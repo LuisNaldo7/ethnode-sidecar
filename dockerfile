@@ -23,8 +23,9 @@ FROM node:19.2.0
 USER node
 
 ## Declare env vars
-ENV ETH1_PROVIDER=http://localhost:8545
-ENV ETH2_PROVIDER=http://localhost:5052
+ENV CLIENT_SCHEME=http
+ENV CLIENT_HOST=localhost
+ENV CLIENT_PORT=5052
 
 ## Create app directory
 WORKDIR /app
