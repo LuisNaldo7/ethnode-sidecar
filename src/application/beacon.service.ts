@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 
 @Injectable()
-export class Eth2StateService {
+export class BeaconService {
   private readonly instance: AxiosInstance;
 
   constructor() {
@@ -12,20 +12,47 @@ export class Eth2StateService {
   }
 
   async getReadinessState(): Promise<void> {
+    const logPrefix = `[Readiness] - ${new Date().toLocaleString()}     `;
+
     try {
+      const responsePeerCount = await this.instance.get(
+        'eth/v1/node/peer_count',
+      );
+      if (
+        responsePeerCount.data.data.connected < +process.env.CLIENT_MIN_PEERS
+      ) {
+        throw new Error(
+          `Status Error. Beacon client has low peers (${responsePeerCount.data.data.connected}/${process.env.CLIENT_MIN_PEERS}).`,
+        );
+      }
+
       const responseSyncing = await this.instance.get('eth/v1/node/syncing');
       if (responseSyncing.data.data.is_syncing) {
         throw new Error('Status Error. Beacon client is still syncing.');
       }
-      console.log('Status OK. Beacon client is ready.');
+
+      console.log(`${logPrefix}Status OK. Beacon client is ready.`);
     } catch (error) {
-      console.error(error);
+      console.error(`${logPrefix}${error}`);
       throw error;
     }
   }
 
   async getLivenessState(): Promise<void> {
+    const logPrefix = `[Liveness]  - ${new Date().toLocaleString()}     `;
+
     try {
+      const responsePeerCount = await this.instance.get(
+        'eth/v1/node/peer_count',
+      );
+      if (
+        responsePeerCount.data.data.connected < +process.env.CLIENT_MIN_PEERS
+      ) {
+        throw new Error(
+          `Status Error. Beacon client has low peers (${responsePeerCount.data.data.connected}/${process.env.CLIENT_MIN_PEERS}).`,
+        );
+      }
+
       const responseSyncing = await this.instance.get('eth/v1/node/syncing');
       if (responseSyncing.data.data.is_syncing) {
         throw new Error('Status Error. Beacon client is still syncing.');
@@ -48,9 +75,9 @@ export class Eth2StateService {
         }
       }
 
-      console.log('Status OK. Beacon client is healthy.');
+      console.log(`${logPrefix}Status OK. Beacon client is healthy.`);
     } catch (error) {
-      console.error(error);
+      console.error(`${logPrefix}${error}`);
       throw error;
     }
   }
