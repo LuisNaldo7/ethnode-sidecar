@@ -15,10 +15,22 @@ export class BeaconService {
     const logPrefix = `[Readiness] - ${new Date().toLocaleString()}     `;
 
     try {
+      const responsePeerCount = await this.instance.get(
+        'eth/v1/node/peer_count',
+      );
+      if (
+        responsePeerCount.data.data.connected < +process.env.CLIENT_MIN_PEERS
+      ) {
+        throw new Error(
+          `Status Error. Beacon client has low peers (${responsePeerCount.data.data.connected}/${process.env.CLIENT_MIN_PEERS}).`,
+        );
+      }
+
       const responseSyncing = await this.instance.get('eth/v1/node/syncing');
       if (responseSyncing.data.data.is_syncing) {
         throw new Error('Status Error. Beacon client is still syncing.');
       }
+
       console.log(`${logPrefix}Status OK. Beacon client is ready.`);
     } catch (error) {
       console.error(`${logPrefix}${error}`);
@@ -30,6 +42,17 @@ export class BeaconService {
     const logPrefix = `[Liveness]  - ${new Date().toLocaleString()}     `;
 
     try {
+      const responsePeerCount = await this.instance.get(
+        'eth/v1/node/peer_count',
+      );
+      if (
+        responsePeerCount.data.data.connected < +process.env.CLIENT_MIN_PEERS
+      ) {
+        throw new Error(
+          `Status Error. Beacon client has low peers (${responsePeerCount.data.data.connected}/${process.env.CLIENT_MIN_PEERS}).`,
+        );
+      }
+
       const responseSyncing = await this.instance.get('eth/v1/node/syncing');
       if (responseSyncing.data.data.is_syncing) {
         throw new Error('Status Error. Beacon client is still syncing.');

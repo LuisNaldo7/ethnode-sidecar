@@ -26,6 +26,7 @@ USER node
 ENV CLIENT_SCHEME=http
 ENV CLIENT_HOST=localhost
 ENV CLIENT_PORT=5052
+ENV CLIENT_MIN_PEERS=10
 
 ## Create app directory
 WORKDIR /app
