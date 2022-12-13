@@ -5,12 +5,12 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { Eth2StateService } from '../../application/eth2.service';
+import { BeaconService } from '../../application/beacon.service';
 
-@ApiTags('Eth2 Probes')
+@ApiTags('Probes')
 @Controller('eth2')
-export class Eth2Controller {
-  constructor(private readonly eth2StateService: Eth2StateService) {}
+export class BeaconController {
+  constructor(private readonly beaconService: BeaconService) {}
 
   @Get('readiness')
   @ApiOperation({
@@ -21,7 +21,7 @@ export class Eth2Controller {
   @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
   async getReadinessEth2(): Promise<any> {
     try {
-      return this.eth2StateService.getReadinessState();
+      return this.beaconService.getReadinessState();
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -36,7 +36,7 @@ export class Eth2Controller {
   @ApiInternalServerErrorResponse({ description: 'Internal server error.' })
   async getLivenessEth2(): Promise<any> {
     try {
-      return this.eth2StateService.getLivenessState();
+      return this.beaconService.getLivenessState();
     } catch (error) {
       throw new InternalServerErrorException();
     }
