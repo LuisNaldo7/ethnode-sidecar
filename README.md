@@ -1,11 +1,10 @@
 # ethnode-sidecar
 
-A sidecar for execution and beacon clients providing readiness and liveness probes.
+A sidecar for ethereum beacon clients providing readiness and liveness probes.
 
 ## Prerequisites
 
-- ETH1 node
-- ETH2 node
+- [Beacon Client](https://ethereum.org/en/upgrades/get-involved/#clients)
 
 ## Run
 
@@ -14,7 +13,7 @@ Copy .env.example to .env and adjust values.
 install dependencies
 
 ```
-npm i
+npm install
 ```
 
 start app

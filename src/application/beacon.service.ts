@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 
 @Injectable()
-export class Eth2StateService {
+export class BeaconService {
   private readonly instance: AxiosInstance;
 
   constructor() {
