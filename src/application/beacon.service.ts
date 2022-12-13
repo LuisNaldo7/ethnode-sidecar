@@ -12,19 +12,23 @@ export class BeaconService {
   }
 
   async getReadinessState(): Promise<void> {
+    const logPrefix = `[Readiness] - ${new Date().toLocaleString()}     `;
+
     try {
       const responseSyncing = await this.instance.get('eth/v1/node/syncing');
       if (responseSyncing.data.data.is_syncing) {
         throw new Error('Status Error. Beacon client is still syncing.');
       }
-      console.log('Status OK. Beacon client is ready.');
+      console.log(`${logPrefix}Status OK. Beacon client is ready.`);
     } catch (error) {
-      console.error(error);
+      console.error(`${logPrefix}${error}`);
       throw error;
     }
   }
 
   async getLivenessState(): Promise<void> {
+    const logPrefix = `[Liveness]  - ${new Date().toLocaleString()}     `;
+
     try {
       const responseSyncing = await this.instance.get('eth/v1/node/syncing');
       if (responseSyncing.data.data.is_syncing) {
@@ -48,9 +52,9 @@ export class BeaconService {
         }
       }
 
-      console.log('Status OK. Beacon client is healthy.');
+      console.log(`${logPrefix}Status OK. Beacon client is healthy.`);
     } catch (error) {
-      console.error(error);
+      console.error(`${logPrefix}${error}`);
       throw error;
     }
   }
