@@ -1,33 +1,26 @@
-import { Injectable } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
+import { Inject, Injectable } from '@nestjs/common';
+import { BeaconRepositoryInterface } from 'src/infrastructure/repositories/beacon.repository.interface';
 
 @Injectable()
 export class BeaconService {
-  private readonly instance: AxiosInstance;
-
-  constructor() {
-    this.instance = axios.create({
-      baseURL: `${process.env.CLIENT_SCHEME}://${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}`,
-    });
-  }
+  constructor(
+    @Inject('BeaconRepository')
+    private readonly beaconNode: BeaconRepositoryInterface,
+  ) {}
 
   async getReadinessState(): Promise<void> {
     const logPrefix = `[Readiness] - ${new Date().toLocaleString()}     `;
 
     try {
-      const responsePeerCount = await this.instance.get(
-        'eth/v1/node/peer_count',
-      );
-      if (
-        responsePeerCount.data.data.connected < +process.env.CLIENT_MIN_PEERS
-      ) {
+      const numPeers = await this.beaconNode.getPeerCount();
+      if (numPeers < +process.env.CLIENT_MIN_PEERS) {
         throw new Error(
-          `Status Error. Beacon client has low peers (${responsePeerCount.data.data.connected}/${process.env.CLIENT_MIN_PEERS}).`,
+          `Status Error. Beacon client has low peers (${numPeers}/${process.env.CLIENT_MIN_PEERS}).`,
         );
       }
 
-      const responseSyncing = await this.instance.get('eth/v1/node/syncing');
-      if (responseSyncing.data.data.is_syncing) {
+      const isSyncing = await this.beaconNode.getSyncState();
+      if (isSyncing) {
         throw new Error('Status Error. Beacon client is still syncing.');
       }
 
@@ -42,24 +35,20 @@ export class BeaconService {
     const logPrefix = `[Liveness]  - ${new Date().toLocaleString()}     `;
 
     try {
-      const responsePeerCount = await this.instance.get(
-        'eth/v1/node/peer_count',
-      );
-      if (
-        responsePeerCount.data.data.connected < +process.env.CLIENT_MIN_PEERS
-      ) {
+      const numPeers = await this.beaconNode.getPeerCount();
+      if (numPeers < +process.env.CLIENT_MIN_PEERS) {
         throw new Error(
-          `Status Error. Beacon client has low peers (${responsePeerCount.data.data.connected}/${process.env.CLIENT_MIN_PEERS}).`,
+          `Status Error. Beacon client has low peers (${numPeers}/${process.env.CLIENT_MIN_PEERS}).`,
         );
       }
 
-      const responseSyncing = await this.instance.get('eth/v1/node/syncing');
-      if (responseSyncing.data.data.is_syncing) {
+      const isSyncing = await this.beaconNode.getSyncState();
+      if (isSyncing) {
         throw new Error('Status Error. Beacon client is still syncing.');
       }
 
-      const responseHealth = await this.instance.get('eth/v1/node/health');
-      switch (responseHealth.status) {
+      const healthStatus = await this.beaconNode.getHealthStatus();
+      switch (healthStatus) {
         case 200:
           break;
         case 206:
