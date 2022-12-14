@@ -24,7 +24,7 @@ export class BeaconService {
         throw new Error('Status Error. Beacon client is still syncing.');
       }
 
-      console.log(`${logPrefix}Status OK. Beacon client is ready.`);
+      console.info(`${logPrefix}Status OK. Beacon client is ready.`);
     } catch (error) {
       console.error(`${logPrefix}${error}`);
       throw error;
@@ -64,7 +64,7 @@ export class BeaconService {
         }
       }
 
-      console.log(`${logPrefix}Status OK. Beacon client is healthy.`);
+      console.info(`${logPrefix}Status OK. Beacon client is healthy.`);
     } catch (error) {
       console.error(`${logPrefix}${error}`);
       throw error;
