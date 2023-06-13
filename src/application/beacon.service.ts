@@ -21,7 +21,7 @@ export class BeaconService {
 
       const isSyncing = await this.beaconNode.getSyncState();
       if (isSyncing) {
-        throw new Error('Status Error. Beacon client is still syncing.');
+        throw new Error('Status Error. Beacon client is still syncing or execution client is offline.');
       }
 
       console.info(`${logPrefix}Status OK. Beacon client is ready.`);
@@ -44,7 +44,7 @@ export class BeaconService {
 
       const isSyncing = await this.beaconNode.getSyncState();
       if (isSyncing) {
-        throw new Error('Status Error. Beacon client is still syncing.');
+        throw new Error('Status Error. Beacon client is still syncing or execution client is offline.');
       }
 
       const healthStatus = await this.beaconNode.getHealthStatus();
