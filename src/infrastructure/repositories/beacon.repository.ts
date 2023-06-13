@@ -19,7 +19,11 @@ export class BeaconRepository implements BeaconRepositoryInterface {
 
   async getSyncState(): Promise<boolean> {
     const response = await this.instance.get('eth/v1/node/syncing');
-    return response.data.data.is_syncing;
+    return (
+      response.data.data.is_syncing ||
+      response.data.data.is_optimistic ||
+      response.data.data.el_offline
+    );
   }
 
   async getHealthStatus(): Promise<HttpStatusCode> {
